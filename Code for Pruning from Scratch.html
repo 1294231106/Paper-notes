@@ -1,0 +1,809 @@
+<!DOCTYPE html>
+<!-- saved from url=(0065)file:///C:/Users/12942/AppData/Local/Temp/MarkdownPadPreview.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+<title>Code for Pruning from Scratch</title>
+
+<style type="text/css">
+/* GitHub stylesheet for MarkdownPad (http://markdownpad.com) */
+/* Author: Nicolas Hery - http://nicolashery.com */
+/* Version: b13fe65ca28d2e568c6ed5d7f06581183df8f2ff */
+/* Source: https://github.com/nicolahery/markdownpad-github */
+
+/* RESET
+=============================================================================*/
+
+html, body, div, span, applet, object, iframe, h1, h2, h3, h4, h5, h6, p, blockquote, pre, a, abbr, acronym, address, big, cite, code, del, dfn, em, img, ins, kbd, q, s, samp, small, strike, strong, sub, sup, tt, var, b, u, i, center, dl, dt, dd, ol, ul, li, fieldset, form, label, legend, table, caption, tbody, tfoot, thead, tr, th, td, article, aside, canvas, details, embed, figure, figcaption, footer, header, hgroup, menu, nav, output, ruby, section, summary, time, mark, audio, video {
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+/* BODY
+=============================================================================*/
+
+body {
+  font-family: Helvetica, arial, freesans, clean, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  color: #333;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 960px;
+  margin: 0 auto;
+}
+
+body>*:first-child {
+  margin-top: 0 !important;
+}
+
+body>*:last-child {
+  margin-bottom: 0 !important;
+}
+
+/* BLOCKS
+=============================================================================*/
+
+p, blockquote, ul, ol, dl, table, pre {
+  margin: 15px 0;
+}
+
+/* HEADERS
+=============================================================================*/
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1 tt, h1 code, h2 tt, h2 code, h3 tt, h3 code, h4 tt, h4 code, h5 tt, h5 code, h6 tt, h6 code {
+  font-size: inherit;
+}
+
+h1 {
+  font-size: 28px;
+  color: #000;
+}
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #ccc;
+  color: #000;
+}
+
+h3 {
+  font-size: 18px;
+}
+
+h4 {
+  font-size: 16px;
+}
+
+h5 {
+  font-size: 14px;
+}
+
+h6 {
+  color: #777;
+  font-size: 14px;
+}
+
+body>h2:first-child, body>h1:first-child, body>h1:first-child+h2, body>h3:first-child, body>h4:first-child, body>h5:first-child, body>h6:first-child {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0;
+}
+
+h1+p, h2+p, h3+p, h4+p, h5+p, h6+p {
+  margin-top: 10px;
+}
+
+/* LINKS
+=============================================================================*/
+
+a {
+  color: #4183C4;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* LISTS
+=============================================================================*/
+
+ul, ol {
+  padding-left: 30px;
+}
+
+ul li > :first-child, 
+ol li > :first-child, 
+ul li ul:first-of-type, 
+ol li ol:first-of-type, 
+ul li ol:first-of-type, 
+ol li ul:first-of-type {
+  margin-top: 0px;
+}
+
+ul ul, ul ol, ol ol, ol ul {
+  margin-bottom: 0;
+}
+
+dl {
+  padding: 0;
+}
+
+dl dt {
+  font-size: 14px;
+  font-weight: bold;
+  font-style: italic;
+  padding: 0;
+  margin: 15px 0 5px;
+}
+
+dl dt:first-child {
+  padding: 0;
+}
+
+dl dt>:first-child {
+  margin-top: 0px;
+}
+
+dl dt>:last-child {
+  margin-bottom: 0px;
+}
+
+dl dd {
+  margin: 0 0 15px;
+  padding: 0 15px;
+}
+
+dl dd>:first-child {
+  margin-top: 0px;
+}
+
+dl dd>:last-child {
+  margin-bottom: 0px;
+}
+
+/* CODE
+=============================================================================*/
+
+pre, code, tt {
+  font-size: 12px;
+  font-family: Consolas, "Liberation Mono", Courier, monospace;
+}
+
+code, tt {
+  margin: 0 0px;
+  padding: 0px 0px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px;
+}
+
+pre>code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent;
+}
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #ccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px;
+}
+
+pre code, pre tt {
+  background-color: transparent;
+  border: none;
+}
+
+kbd {
+    -moz-border-bottom-colors: none;
+    -moz-border-left-colors: none;
+    -moz-border-right-colors: none;
+    -moz-border-top-colors: none;
+    background-color: #DDDDDD;
+    background-image: linear-gradient(#F1F1F1, #DDDDDD);
+    background-repeat: repeat-x;
+    border-color: #DDDDDD #CCCCCC #CCCCCC #DDDDDD;
+    border-image: none;
+    border-radius: 2px 2px 2px 2px;
+    border-style: solid;
+    border-width: 1px;
+    font-family: "Helvetica Neue",Helvetica,Arial,sans-serif;
+    line-height: 10px;
+    padding: 1px 4px;
+}
+
+/* QUOTES
+=============================================================================*/
+
+blockquote {
+  border-left: 4px solid #DDD;
+  padding: 0 15px;
+  color: #777;
+}
+
+blockquote>:first-child {
+  margin-top: 0px;
+}
+
+blockquote>:last-child {
+  margin-bottom: 0px;
+}
+
+/* HORIZONTAL RULES
+=============================================================================*/
+
+hr {
+  clear: both;
+  margin: 15px 0;
+  height: 0px;
+  overflow: hidden;
+  border: none;
+  background: transparent;
+  border-bottom: 4px solid #ddd;
+  padding: 0;
+}
+
+/* TABLES
+=============================================================================*/
+
+table th {
+  font-weight: bold;
+}
+
+table th, table td {
+  border: 1px solid #ccc;
+  padding: 6px 13px;
+}
+
+table tr {
+  border-top: 1px solid #ccc;
+  background-color: #fff;
+}
+
+table tr:nth-child(2n) {
+  background-color: #f8f8f8;
+}
+
+/* IMAGES
+=============================================================================*/
+
+img {
+  max-width: 100%
+}
+</style>
+<style type="text/css">
+.highlight  { background: #ffffff; }
+.highlight .c { color: #999988; font-style: italic } /* Comment */
+.highlight .err { color: #a61717; background-color: #e3d2d2 } /* Error */
+.highlight .k { font-weight: bold } /* Keyword */
+.highlight .o { font-weight: bold } /* Operator */
+.highlight .cm { color: #999988; font-style: italic } /* Comment.Multiline */
+.highlight .cp { color: #999999; font-weight: bold } /* Comment.Preproc */
+.highlight .c1 { color: #999988; font-style: italic } /* Comment.Single */
+.highlight .cs { color: #999999; font-weight: bold; font-style: italic } /* Comment.Special */
+.highlight .gd { color: #000000; background-color: #ffdddd } /* Generic.Deleted */
+.highlight .gd .x { color: #000000; background-color: #ffaaaa } /* Generic.Deleted.Specific */
+.highlight .ge { font-style: italic } /* Generic.Emph */
+.highlight .gr { color: #aa0000 } /* Generic.Error */
+.highlight .gh { color: #999999 } /* Generic.Heading */
+.highlight .gi { color: #000000; background-color: #ddffdd } /* Generic.Inserted */
+.highlight .gi .x { color: #000000; background-color: #aaffaa } /* Generic.Inserted.Specific */
+.highlight .go { color: #888888 } /* Generic.Output */
+.highlight .gp { color: #555555 } /* Generic.Prompt */
+.highlight .gs { font-weight: bold } /* Generic.Strong */
+.highlight .gu { color: #aaaaaa } /* Generic.Subheading */
+.highlight .gt { color: #aa0000 } /* Generic.Traceback */
+.highlight .kc { font-weight: bold } /* Keyword.Constant */
+.highlight .kd { font-weight: bold } /* Keyword.Declaration */
+.highlight .kp { font-weight: bold } /* Keyword.Pseudo */
+.highlight .kr { font-weight: bold } /* Keyword.Reserved */
+.highlight .kt { color: #445588; font-weight: bold } /* Keyword.Type */
+.highlight .m { color: #009999 } /* Literal.Number */
+.highlight .s { color: #d14 } /* Literal.String */
+.highlight .na { color: #008080 } /* Name.Attribute */
+.highlight .nb { color: #0086B3 } /* Name.Builtin */
+.highlight .nc { color: #445588; font-weight: bold } /* Name.Class */
+.highlight .no { color: #008080 } /* Name.Constant */
+.highlight .ni { color: #800080 } /* Name.Entity */
+.highlight .ne { color: #990000; font-weight: bold } /* Name.Exception */
+.highlight .nf { color: #990000; font-weight: bold } /* Name.Function */
+.highlight .nn { color: #555555 } /* Name.Namespace */
+.highlight .nt { color: #000080 } /* Name.Tag */
+.highlight .nv { color: #008080 } /* Name.Variable */
+.highlight .ow { font-weight: bold } /* Operator.Word */
+.highlight .w { color: #bbbbbb } /* Text.Whitespace */
+.highlight .mf { color: #009999 } /* Literal.Number.Float */
+.highlight .mh { color: #009999 } /* Literal.Number.Hex */
+.highlight .mi { color: #009999 } /* Literal.Number.Integer */
+.highlight .mo { color: #009999 } /* Literal.Number.Oct */
+.highlight .sb { color: #d14 } /* Literal.String.Backtick */
+.highlight .sc { color: #d14 } /* Literal.String.Char */
+.highlight .sd { color: #d14 } /* Literal.String.Doc */
+.highlight .s2 { color: #d14 } /* Literal.String.Double */
+.highlight .se { color: #d14 } /* Literal.String.Escape */
+.highlight .sh { color: #d14 } /* Literal.String.Heredoc */
+.highlight .si { color: #d14 } /* Literal.String.Interpol */
+.highlight .sx { color: #d14 } /* Literal.String.Other */
+.highlight .sr { color: #009926 } /* Literal.String.Regex */
+.highlight .s1 { color: #d14 } /* Literal.String.Single */
+.highlight .ss { color: #990073 } /* Literal.String.Symbol */
+.highlight .bp { color: #999999 } /* Name.Builtin.Pseudo */
+.highlight .vc { color: #008080 } /* Name.Variable.Class */
+.highlight .vg { color: #008080 } /* Name.Variable.Global */
+.highlight .vi { color: #008080 } /* Name.Variable.Instance */
+.highlight .il { color: #009999 } /* Literal.Number.Integer.Long */
+.pl-c {
+    color: #969896;
+}
+
+.pl-c1,.pl-mdh,.pl-mm,.pl-mp,.pl-mr,.pl-s1 .pl-v,.pl-s3,.pl-sc,.pl-sv {
+    color: #0086b3;
+}
+
+.pl-e,.pl-en {
+    color: #795da3;
+}
+
+.pl-s1 .pl-s2,.pl-smi,.pl-smp,.pl-stj,.pl-vo,.pl-vpf {
+    color: #333;
+}
+
+.pl-ent {
+    color: #63a35c;
+}
+
+.pl-k,.pl-s,.pl-st {
+    color: #a71d5d;
+}
+
+.pl-pds,.pl-s1,.pl-s1 .pl-pse .pl-s2,.pl-sr,.pl-sr .pl-cce,.pl-sr .pl-sra,.pl-sr .pl-sre,.pl-src,.pl-v {
+    color: #df5000;
+}
+
+.pl-id {
+    color: #b52a1d;
+}
+
+.pl-ii {
+    background-color: #b52a1d;
+    color: #f8f8f8;
+}
+
+.pl-sr .pl-cce {
+    color: #63a35c;
+    font-weight: bold;
+}
+
+.pl-ml {
+    color: #693a17;
+}
+
+.pl-mh,.pl-mh .pl-en,.pl-ms {
+    color: #1d3e81;
+    font-weight: bold;
+}
+
+.pl-mq {
+    color: #008080;
+}
+
+.pl-mi {
+    color: #333;
+    font-style: italic;
+}
+
+.pl-mb {
+    color: #333;
+    font-weight: bold;
+}
+
+.pl-md,.pl-mdhf {
+    background-color: #ffecec;
+    color: #bd2c00;
+}
+
+.pl-mdht,.pl-mi1 {
+    background-color: #eaffea;
+    color: #55a532;
+}
+
+.pl-mdr {
+    color: #795da3;
+    font-weight: bold;
+}
+
+.pl-mo {
+    color: #1d3e81;
+}
+.task-list {
+padding-left:10px;
+margin-bottom:0;
+}
+
+.task-list li {
+    margin-left: 20px;
+}
+
+.task-list-item {
+list-style-type:none;
+padding-left:10px;
+}
+
+.task-list-item label {
+font-weight:400;
+}
+
+.task-list-item.enabled label {
+cursor:pointer;
+}
+
+.task-list-item+.task-list-item {
+margin-top:3px;
+}
+
+.task-list-item-checkbox {
+display:inline-block;
+margin-left:-20px;
+margin-right:3px;
+vertical-align:1px;
+}
+</style>
+<!--<base href="file:\\\C:\Users\12942\Desktop\github\">--><base href=".">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML" id="">
+</script>
+<style type="text/css">.MathJax_Hover_Frame {border-radius: .25em; -webkit-border-radius: .25em; -moz-border-radius: .25em; -khtml-border-radius: .25em; box-shadow: 0px 0px 15px #83A; -webkit-box-shadow: 0px 0px 15px #83A; -moz-box-shadow: 0px 0px 15px #83A; -khtml-box-shadow: 0px 0px 15px #83A; border: 1px solid #A6D ! important; display: inline-block; position: absolute}
+.MathJax_Menu_Button .MathJax_Hover_Arrow {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 4px; -webkit-border-radius: 4px; -moz-border-radius: 4px; -khtml-border-radius: 4px; font-family: 'Courier New',Courier; font-size: 9px; color: #F0F0F0}
+.MathJax_Menu_Button .MathJax_Hover_Arrow span {display: block; background-color: #AAA; border: 1px solid; border-radius: 3px; line-height: 0; padding: 4px}
+.MathJax_Hover_Arrow:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_Hover_Arrow:hover span {background-color: #CCC!important}
+</style><style type="text/css">#MathJax_About {position: fixed; left: 50%; width: auto; text-align: center; border: 3px outset; padding: 1em 2em; background-color: #DDDDDD; color: black; cursor: default; font-family: message-box; font-size: 120%; font-style: normal; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; border-radius: 15px; -webkit-border-radius: 15px; -moz-border-radius: 15px; -khtml-border-radius: 15px; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_About.MathJax_MousePost {outline: none}
+.MathJax_Menu {position: absolute; background-color: white; color: black; width: auto; padding: 2px; border: 1px solid #CCCCCC; margin: 0; cursor: default; font: menu; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; z-index: 201; box-shadow: 0px 10px 20px #808080; -webkit-box-shadow: 0px 10px 20px #808080; -moz-box-shadow: 0px 10px 20px #808080; -khtml-box-shadow: 0px 10px 20px #808080; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+.MathJax_MenuItem {padding: 2px 2em; background: transparent}
+.MathJax_MenuArrow {position: absolute; right: .5em; padding-top: .25em; color: #666666; font-size: .75em}
+.MathJax_MenuActive .MathJax_MenuArrow {color: white}
+.MathJax_MenuArrow.RTL {left: .5em; right: auto}
+.MathJax_MenuCheck {position: absolute; left: .7em}
+.MathJax_MenuCheck.RTL {right: .7em; left: auto}
+.MathJax_MenuRadioCheck {position: absolute; left: 1em}
+.MathJax_MenuRadioCheck.RTL {right: 1em; left: auto}
+.MathJax_MenuLabel {padding: 2px 2em 4px 1.33em; font-style: italic}
+.MathJax_MenuRule {border-top: 1px solid #CCCCCC; margin: 4px 1px 0px}
+.MathJax_MenuDisabled {color: GrayText}
+.MathJax_MenuActive {background-color: Highlight; color: HighlightText}
+.MathJax_MenuDisabled:focus, .MathJax_MenuLabel:focus {background-color: #E8E8E8}
+.MathJax_ContextMenu:focus {outline: none}
+.MathJax_ContextMenu .MathJax_MenuItem:focus {outline: none}
+#MathJax_AboutClose {top: .2em; right: .2em}
+.MathJax_Menu .MathJax_MenuClose {top: -10px; left: -10px}
+.MathJax_MenuClose {position: absolute; cursor: pointer; display: inline-block; border: 2px solid #AAA; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; font-family: 'Courier New',Courier; font-size: 24px; color: #F0F0F0}
+.MathJax_MenuClose span {display: block; background-color: #AAA; border: 1.5px solid; border-radius: 18px; -webkit-border-radius: 18px; -moz-border-radius: 18px; -khtml-border-radius: 18px; line-height: 0; padding: 8px 0 6px}
+.MathJax_MenuClose:hover {color: white!important; border: 2px solid #CCC!important}
+.MathJax_MenuClose:hover span {background-color: #CCC!important}
+.MathJax_MenuClose:hover:focus {outline: none}
+</style><style type="text/css">.MathJax_Preview .MJXf-math {color: inherit!important}
+</style><style type="text/css">.MJX_Assistive_MathML {position: absolute!important; top: 0; left: 0; clip: rect(1px, 1px, 1px, 1px); padding: 1px 0 0 0!important; border: 0!important; height: 1px!important; width: 1px!important; overflow: hidden!important; display: block!important; -webkit-touch-callout: none; -webkit-user-select: none; -khtml-user-select: none; -moz-user-select: none; -ms-user-select: none; user-select: none}
+.MJX_Assistive_MathML.MJX_Assistive_MathML_Block {width: 100%!important}
+</style><style type="text/css">#MathJax_Zoom {position: absolute; background-color: #F0F0F0; overflow: auto; display: block; z-index: 301; padding: .5em; border: 1px solid black; margin: 0; font-weight: normal; font-style: normal; text-align: left; text-indent: 0; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; -webkit-box-sizing: content-box; -moz-box-sizing: content-box; box-sizing: content-box; box-shadow: 5px 5px 15px #AAAAAA; -webkit-box-shadow: 5px 5px 15px #AAAAAA; -moz-box-shadow: 5px 5px 15px #AAAAAA; -khtml-box-shadow: 5px 5px 15px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true')}
+#MathJax_ZoomOverlay {position: absolute; left: 0; top: 0; z-index: 300; display: inline-block; width: 100%; height: 100%; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+#MathJax_ZoomFrame {position: relative; display: inline-block; height: 0; width: 0}
+#MathJax_ZoomEventTrap {position: absolute; left: 0; top: 0; z-index: 302; display: inline-block; border: 0; padding: 0; margin: 0; background-color: white; opacity: 0; filter: alpha(opacity=0)}
+</style><style type="text/css">.MathJax_Preview {color: #888}
+#MathJax_Message {position: fixed; left: 1em; bottom: 1.5em; background-color: #E6E6E6; border: 1px solid #959595; margin: 0px; padding: 2px 8px; z-index: 102; color: black; font-size: 80%; width: auto; white-space: nowrap}
+#MathJax_MSIE_Frame {position: absolute; top: 0; left: 0; width: 0px; z-index: 101; border: 0px; margin: 0px; padding: 0px}
+.MathJax_Error {color: #CC0000; font-style: italic}
+</style><style type="text/css">.MJXp-script {font-size: .8em}
+.MJXp-right {-webkit-transform-origin: right; -moz-transform-origin: right; -ms-transform-origin: right; -o-transform-origin: right; transform-origin: right}
+.MJXp-bold {font-weight: bold}
+.MJXp-italic {font-style: italic}
+.MJXp-scr {font-family: MathJax_Script,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-frak {font-family: MathJax_Fraktur,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-sf {font-family: MathJax_SansSerif,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-cal {font-family: MathJax_Caligraphic,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-mono {font-family: MathJax_Typewriter,'Times New Roman',Times,STIXGeneral,serif}
+.MJXp-largeop {font-size: 150%}
+.MJXp-largeop.MJXp-int {vertical-align: -.2em}
+.MJXp-math {display: inline-block; line-height: 1.2; text-indent: 0; font-family: 'Times New Roman',Times,STIXGeneral,serif; white-space: nowrap; border-collapse: collapse}
+.MJXp-display {display: block; text-align: center; margin: 1em 0}
+.MJXp-math span {display: inline-block}
+.MJXp-box {display: block!important; text-align: center}
+.MJXp-box:after {content: " "}
+.MJXp-rule {display: block!important; margin-top: .1em}
+.MJXp-char {display: block!important}
+.MJXp-mo {margin: 0 .15em}
+.MJXp-mfrac {margin: 0 .125em; vertical-align: .25em}
+.MJXp-denom {display: inline-table!important; width: 100%}
+.MJXp-denom > * {display: table-row!important}
+.MJXp-surd {vertical-align: top}
+.MJXp-surd > * {display: block!important}
+.MJXp-script-box > *  {display: table!important; height: 50%}
+.MJXp-script-box > * > * {display: table-cell!important; vertical-align: top}
+.MJXp-script-box > *:last-child > * {vertical-align: bottom}
+.MJXp-script-box > * > * > * {display: block!important}
+.MJXp-mphantom {visibility: hidden}
+.MJXp-munderover {display: inline-table!important}
+.MJXp-over {display: inline-block!important; text-align: center}
+.MJXp-over > * {display: block!important}
+.MJXp-munderover > * {display: table-row!important}
+.MJXp-mtable {vertical-align: .25em; margin: 0 .125em}
+.MJXp-mtable > * {display: inline-table!important; vertical-align: middle}
+.MJXp-mtr {display: table-row!important}
+.MJXp-mtd {display: table-cell!important; text-align: center; padding: .5em 0 0 .5em}
+.MJXp-mtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-mlabeledtr {display: table-row!important}
+.MJXp-mlabeledtr > .MJXp-mtd:first-child {padding-left: 0}
+.MJXp-mlabeledtr:first-child > .MJXp-mtd {padding-top: 0}
+.MJXp-merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MJXp-scale0 {-webkit-transform: scaleX(.0); -moz-transform: scaleX(.0); -ms-transform: scaleX(.0); -o-transform: scaleX(.0); transform: scaleX(.0)}
+.MJXp-scale1 {-webkit-transform: scaleX(.1); -moz-transform: scaleX(.1); -ms-transform: scaleX(.1); -o-transform: scaleX(.1); transform: scaleX(.1)}
+.MJXp-scale2 {-webkit-transform: scaleX(.2); -moz-transform: scaleX(.2); -ms-transform: scaleX(.2); -o-transform: scaleX(.2); transform: scaleX(.2)}
+.MJXp-scale3 {-webkit-transform: scaleX(.3); -moz-transform: scaleX(.3); -ms-transform: scaleX(.3); -o-transform: scaleX(.3); transform: scaleX(.3)}
+.MJXp-scale4 {-webkit-transform: scaleX(.4); -moz-transform: scaleX(.4); -ms-transform: scaleX(.4); -o-transform: scaleX(.4); transform: scaleX(.4)}
+.MJXp-scale5 {-webkit-transform: scaleX(.5); -moz-transform: scaleX(.5); -ms-transform: scaleX(.5); -o-transform: scaleX(.5); transform: scaleX(.5)}
+.MJXp-scale6 {-webkit-transform: scaleX(.6); -moz-transform: scaleX(.6); -ms-transform: scaleX(.6); -o-transform: scaleX(.6); transform: scaleX(.6)}
+.MJXp-scale7 {-webkit-transform: scaleX(.7); -moz-transform: scaleX(.7); -ms-transform: scaleX(.7); -o-transform: scaleX(.7); transform: scaleX(.7)}
+.MJXp-scale8 {-webkit-transform: scaleX(.8); -moz-transform: scaleX(.8); -ms-transform: scaleX(.8); -o-transform: scaleX(.8); transform: scaleX(.8)}
+.MJXp-scale9 {-webkit-transform: scaleX(.9); -moz-transform: scaleX(.9); -ms-transform: scaleX(.9); -o-transform: scaleX(.9); transform: scaleX(.9)}
+.MathJax_PHTML .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style><style type="text/css">.MathJax_Display {text-align: center; margin: 1em 0em; position: relative; display: block!important; text-indent: 0; max-width: none; max-height: none; min-width: 0; min-height: 0; width: 100%}
+.MathJax .merror {background-color: #FFFF88; color: #CC0000; border: 1px solid #CC0000; padding: 1px 3px; font-style: normal; font-size: 90%}
+.MathJax .MJX-monospace {font-family: monospace}
+.MathJax .MJX-sans-serif {font-family: sans-serif}
+#MathJax_Tooltip {background-color: InfoBackground; color: InfoText; border: 1px solid black; box-shadow: 2px 2px 5px #AAAAAA; -webkit-box-shadow: 2px 2px 5px #AAAAAA; -moz-box-shadow: 2px 2px 5px #AAAAAA; -khtml-box-shadow: 2px 2px 5px #AAAAAA; filter: progid:DXImageTransform.Microsoft.dropshadow(OffX=2, OffY=2, Color='gray', Positive='true'); padding: 3px 4px; z-index: 401; position: absolute; left: 0; top: 0; width: auto; height: auto; display: none}
+.MathJax {display: inline; font-style: normal; font-weight: normal; line-height: normal; font-size: 100%; font-size-adjust: none; text-indent: 0; text-align: left; text-transform: none; letter-spacing: normal; word-spacing: normal; word-wrap: normal; white-space: nowrap; float: none; direction: ltr; max-width: none; max-height: none; min-width: 0; min-height: 0; border: 0; padding: 0; margin: 0}
+.MathJax:focus, body :focus .MathJax {display: inline-table}
+.MathJax.MathJax_FullWidth {text-align: center; display: table-cell!important; width: 10000em!important}
+.MathJax img, .MathJax nobr, .MathJax a {border: 0; padding: 0; margin: 0; max-width: none; max-height: none; min-width: 0; min-height: 0; vertical-align: 0; line-height: normal; text-decoration: none}
+img.MathJax_strut {border: 0!important; padding: 0!important; margin: 0!important; vertical-align: 0!important}
+.MathJax span {display: inline; position: static; border: 0; padding: 0; margin: 0; vertical-align: 0; line-height: normal; text-decoration: none}
+.MathJax nobr {white-space: nowrap!important}
+.MathJax img {display: inline!important; float: none!important}
+.MathJax * {transition: none; -webkit-transition: none; -moz-transition: none; -ms-transition: none; -o-transition: none}
+.MathJax_Processing {visibility: hidden; position: fixed; width: 0; height: 0; overflow: hidden}
+.MathJax_Processed {display: none!important}
+.MathJax_ExBox {display: block!important; overflow: hidden; width: 1px; height: 60ex; min-height: 0; max-height: none}
+.MathJax .MathJax_EmBox {display: block!important; overflow: hidden; width: 1px; height: 60em; min-height: 0; max-height: none}
+.MathJax_LineBox {display: table!important}
+.MathJax_LineBox span {display: table-cell!important; width: 10000em!important; min-width: 0; max-width: none; padding: 0; border: 0; margin: 0}
+.MathJax .MathJax_HitBox {cursor: text; background: white; opacity: 0; filter: alpha(opacity=0)}
+.MathJax .MathJax_HitBox * {filter: none; opacity: 1; background: transparent}
+#MathJax_Tooltip * {filter: none; opacity: 1; background: transparent}
+@font-face {font-family: MathJax_Main; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Main-bold; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Bold.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Bold.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Main-italic; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Main-Italic.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Main-Italic.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Math-italic; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Math-Italic.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Math-Italic.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Caligraphic; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Caligraphic-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Caligraphic-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size1; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size1-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size1-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size2; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size2-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size2-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size3; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size3-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size3-Regular.otf?V=2.7.1') format('opentype')}
+@font-face {font-family: MathJax_Size4; src: url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/woff/MathJax_Size4-Regular.woff?V=2.7.1') format('woff'), url('https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/fonts/HTML-CSS/TeX/otf/MathJax_Size4-Regular.otf?V=2.7.1') format('opentype')}
+.MathJax .noError {vertical-align: ; font-size: 90%; text-align: left; color: black; padding: 1px 3px; border: 1px solid}
+</style></head>
+<body><div style="visibility: hidden; overflow: hidden; position: absolute; top: 0px; height: 1px; width: auto; padding: 0px; border: 0px; margin: 0px; text-align: left; text-indent: 0px; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal;"><div id="MathJax_Hidden"></div></div><div id="MathJax_Message" style="display: none;"></div>
+<h1>
+<a id="user-content-pruning-from-scratch" class="anchor" href="file:///C:/Users/12942/Desktop/github/#pruning-from-scratch" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Pruning from scratch</h1>
+<h2>
+<a id="user-content-aim" class="anchor" href="file:///C:/Users/12942/Desktop/github/#aim" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Aim</h2>
+<ul>
+<li>通过BN层的 <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-1-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03B3;&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-1" style="width: 0.658em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.539em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.61em, 1000.54em, 2.622em, -999.997em); top: -2.199em; left: 0em;"><span class="mrow" id="MathJax-Span-2"><span class="mi" id="MathJax-Span-3" style="font-family: MathJax_Math-italic;">γ<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.205em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.354em; border-left: 0px solid; width: 0px; height: 0.932em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>γ</mi></math></span></span><script type="math/tex" id="MathJax-Element-1"> \gamma </script>，把 <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-2-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mi&gt;&amp;#x03B3;&lt;/mi&gt;&lt;/math&gt;" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-4" style="width: 0.658em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.539em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.61em, 1000.54em, 2.622em, -999.997em); top: -2.199em; left: 0em;"><span class="mrow" id="MathJax-Span-5"><span class="mi" id="MathJax-Span-6" style="font-family: MathJax_Math-italic;">γ<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.003em;"></span></span></span><span style="display: inline-block; width: 0px; height: 2.205em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.354em; border-left: 0px solid; width: 0px; height: 0.932em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mi>γ</mi></math></span></span><script type="math/tex" id="MathJax-Element-2"> \gamma </script>的当作成门函数来实现剪枝的目的</li>
+<li>实现在使用随机初始化权重的时候我们的方法依然能够得到比较好的剪枝结果。</li>
+</ul>
+<h2>
+<a id="user-content-prepare" class="anchor" href="file:///C:/Users/12942/Desktop/github/#prepare" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>prepare</h2>
+<ul>
+<li>pytorch <span class="MathJax_Preview" style="color: inherit; display: none;"></span><span class="MathJax" id="MathJax-Element-3-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot;&gt;&lt;mo&gt;&amp;#x2265;&lt;/mo&gt;&lt;/math&gt;" role="presentation" style="position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-7" style="width: 0.955em; display: inline-block;"><span style="display: inline-block; position: relative; width: 0.777em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(1.372em, 1000.72em, 2.503em, -999.997em); top: -2.199em; left: 0em;"><span class="mrow" id="MathJax-Span-8"><span class="mo" id="MathJax-Span-9" style="font-family: MathJax_Main;">≥</span></span><span style="display: inline-block; width: 0px; height: 2.205em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -0.211em; border-left: 0px solid; width: 0px; height: 1.075em;"></span></span></nobr><span class="MJX_Assistive_MathML" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML"><mo>≥</mo></math></span></span><script type="math/tex" id="MathJax-Element-3"> \geq </script> 1.0.1</li>
+<li>VGG19</li>
+<li>CIFAR10(60000 ,32*32, 10class, 50000 for train,1000 for test)</li>
+</ul>
+<h2>
+<a id="user-content-how-to-achive" class="anchor" href="file:///C:/Users/12942/Desktop/github/#how-to-achive" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>How to achive</h2>
+<h3>
+<a id="user-content-model生成" class="anchor" href="file:///C:/Users/12942/Desktop/github/#model%E7%94%9F%E6%88%90" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>Model生成</h3>
+<ul>
+<li>所有初始化的BN层的权重设成0.5，以剪去50%的FLOPS</li>
+<li>随机初始化的权重（torch.normal，随机生成函数）</li>
+</ul>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">def</span> <span class="pl-en">_initialize_weights</span>(<span class="pl-s1">self</span>):
+	<span class="pl-k">for</span> <span class="pl-s1">m</span> <span class="pl-c1">in</span> <span class="pl-s1">self</span>.<span class="pl-en">modules</span>():
+		<span class="pl-k">if</span> <span class="pl-en">isinstance</span>(<span class="pl-s1">m</span>, <span class="pl-s1">nn</span>.<span class="pl-v">Conv2d</span>):
+			<span class="pl-s1">n</span> <span class="pl-c1">=</span> <span class="pl-s1">m</span>.<span class="pl-s1">kernel_size</span>[<span class="pl-c1">0</span>] <span class="pl-c1">*</span> <span class="pl-s1">m</span>.<span class="pl-s1">kernel_size</span>[<span class="pl-c1">1</span>] <span class="pl-c1">*</span> <span class="pl-s1">m</span>.<span class="pl-s1">out_channels</span>
+            <span class="pl-s1">m</span>.<span class="pl-s1">weight</span>.<span class="pl-s1">data</span>.<span class="pl-en">normal_</span>(<span class="pl-c1">0</span>, <span class="pl-s1">math</span>.<span class="pl-en">sqrt</span>(<span class="pl-c1">2.</span> <span class="pl-c1">/</span> <span class="pl-s1">n</span>))
+            <span class="pl-k">if</span> <span class="pl-s1">m</span>.<span class="pl-s1">bias</span> <span class="pl-c1">is</span> <span class="pl-c1">not</span> <span class="pl-c1">None</span>:
+                <span class="pl-s1">m</span>.<span class="pl-s1">bias</span>.<span class="pl-s1">data</span>.<span class="pl-en">zero_</span>()
+        <span class="pl-k">elif</span> <span class="pl-en">isinstance</span>(<span class="pl-s1">m</span>, <span class="pl-s1">nn</span>.<span class="pl-v">BatchNorm2d</span>):
+            <span class="pl-s1">m</span>.<span class="pl-s1">weight</span>.<span class="pl-s1">data</span>.<span class="pl-en">fill_</span>(<span class="pl-c1">0.5</span>)
+            <span class="pl-s1">m</span>.<span class="pl-s1">bias</span>.<span class="pl-s1">data</span>.<span class="pl-en">zero_</span>()
+        <span class="pl-k">elif</span> <span class="pl-en">isinstance</span>(<span class="pl-s1">m</span>, <span class="pl-s1">nn</span>.<span class="pl-v">Linear</span>):
+            <span class="pl-s1">m</span>.<span class="pl-s1">weight</span>.<span class="pl-s1">data</span>.<span class="pl-en">normal_</span>(<span class="pl-c1">0</span>, <span class="pl-c1">0.01</span>)
+            <span class="pl-s1">m</span>.<span class="pl-s1">bias</span>.<span class="pl-s1">data</span>.<span class="pl-en">zero_</span>()</pre></div>
+<h3>
+<a id="user-content-架构的训练" class="anchor" href="file:///C:/Users/12942/Desktop/github/#%E6%9E%B6%E6%9E%84%E7%9A%84%E8%AE%AD%E7%BB%83" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>架构的训练</h3>
+<ul>
+<li>首先将网络的权重冻结，只留下BN层的权重，代码如下：</li>
+</ul>
+<div class="highlight highlight-source-python"><pre> <span class="pl-k">for</span> <span class="pl-s1">para</span> <span class="pl-c1">in</span> <span class="pl-s1">model</span>.<span class="pl-en">parameters</span>():
+        <span class="pl-s1">para</span>.<span class="pl-s1">requires_grad</span> <span class="pl-c1">=</span> <span class="pl-c1">False</span>
+ <span class="pl-k">for</span> <span class="pl-s1">layer</span> <span class="pl-c1">in</span> <span class="pl-s1">model</span>.<span class="pl-en">modules</span>():
+    <span class="pl-k">if</span> <span class="pl-en">isinstance</span>(<span class="pl-s1">layer</span>, <span class="pl-s1">nn</span>.<span class="pl-v">BatchNorm2d</span>):
+        <span class="pl-k">for</span> <span class="pl-s1">para</span> <span class="pl-c1">in</span> <span class="pl-s1">layer</span>.<span class="pl-en">parameters</span>():
+            <span class="pl-s1">para</span>.<span class="pl-s1">requires_grad</span> <span class="pl-c1">=</span> <span class="pl-c1">True</span></pre></div>
+<ul>
+<li>再用10个epoch训练出可以网络架构，代码如下</li>
+</ul>
+<div class="highlight highlight-source-python"><pre>    <span class="pl-k">for</span> <span class="pl-s1">epochid</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">args</span>.<span class="pl-s1">aepoch</span>):
+        <span class="pl-en">print</span>(<span class="pl-s">'==&gt; Epoch: %d'</span> <span class="pl-c1">%</span> <span class="pl-s1">epochid</span>)
+        <span class="pl-s1">train_loss</span> <span class="pl-c1">=</span> <span class="pl-c1">0.0</span>
+        <span class="pl-s1">total</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>
+        <span class="pl-s1">correct</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>
+        <span class="pl-k">for</span> <span class="pl-s1">batchid</span>, (<span class="pl-s1">data</span>, <span class="pl-s1">target</span>) <span class="pl-c1">in</span> <span class="pl-en">enumerate</span>(<span class="pl-s1">train_loader</span>):
+            <span class="pl-k">if</span> <span class="pl-s1">args</span>.<span class="pl-v">Use_Cuda</span>:
+                <span class="pl-s1">data</span>, <span class="pl-s1">target</span> <span class="pl-c1">=</span> <span class="pl-s1">data</span>.<span class="pl-en">cuda</span>(), <span class="pl-s1">target</span>.<span class="pl-en">cuda</span>()
+            <span class="pl-s1">output</span> <span class="pl-c1">=</span> <span class="pl-s1">model</span>(<span class="pl-s1">data</span>
+            <span class="pl-s1">optimizer</span>.<span class="pl-en">zero_grad</span>()
+            <span class="pl-s1">loss</span> <span class="pl-c1">=</span> <span class="pl-en">criterion</span>(<span class="pl-s1">output</span>, <span class="pl-s1">target</span>)
+            <span class="pl-s1">loss</span>.<span class="pl-en">backward</span>()
+            <span class="pl-s1">regularzation_update</span>(<span class="pl-s1">model</span>, <span class="pl-s1">args</span>)
+            <span class="pl-s1">optimizer</span>.<span class="pl-en">step</span>()
+
+            <span class="pl-s1">train_loss</span> <span class="pl-c1">+=</span> <span class="pl-s1">loss</span>.<span class="pl-en">item</span>()
+            <span class="pl-s1">_</span>, <span class="pl-s1">predicted</span> <span class="pl-c1">=</span> <span class="pl-s1">output</span>.<span class="pl-en">max</span>(<span class="pl-c1">1</span>)
+            <span class="pl-s1">total</span> <span class="pl-c1">+=</span> <span class="pl-s1">target</span>.<span class="pl-en">size</span>(<span class="pl-c1">0</span>)
+            <span class="pl-s1">correct</span> <span class="pl-c1">+=</span> <span class="pl-s1">predicted</span>.<span class="pl-en">eq</span>(<span class="pl-s1">target</span>).<span class="pl-en">sum</span>().<span class="pl-en">item</span>()
+            <span class="pl-s1">avg_loss</span> <span class="pl-c1">=</span> <span class="pl-s1">train_loss</span> <span class="pl-c1">/</span> (<span class="pl-s1">batchid</span><span class="pl-c1">+</span><span class="pl-c1">1</span>)
+            <span class="pl-s1">acc</span> <span class="pl-c1">=</span> <span class="pl-s1">correct</span> <span class="pl-c1">/</span> <span class="pl-s1">total</span>
+            <span class="pl-en">progress_bar</span>(<span class="pl-s1">batchid</span>, <span class="pl-en">len</span>(<span class="pl-s1">train_loader</span>), <span class="pl-s">'Loss: %.3f | Acc: %.3f'</span><span class="pl-c1">%</span> (<span class="pl-s1">avg_loss</span>, <span class="pl-s1">acc</span>))</pre></div>
+<ul>
+<li>注意中间<code>regularzation_update(model, args)</code>，它的作用是用一个正则化项去更新梯度，正则化项为
+<span class="MathJax_Preview" style="color: inherit; display: none;"></span><div class="MathJax_Display" style="text-align: center;"><span class="MathJax" id="MathJax-Element-4-Frame" tabindex="0" data-mathml="&lt;math xmlns=&quot;http://www.w3.org/1998/Math/MathML&quot; display=&quot;block&quot;&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;&amp;#x03A9;&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;&amp;#x039B;&lt;/mi&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mo&gt;=&lt;/mo&gt;&lt;mo stretchy=&quot;false&quot;&gt;(&lt;/mo&gt;&lt;mfrac&gt;&lt;mrow&gt;&lt;munder&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/munder&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;|&lt;/mo&gt;&lt;/mrow&gt;&lt;mi mathvariant=&quot;normal&quot;&gt;&amp;#x039B;&lt;/mi&gt;&lt;msub&gt;&lt;mrow class=&quot;MJX-TeXAtom-ORD&quot;&gt;&lt;mo stretchy=&quot;false&quot;&gt;|&lt;/mo&gt;&lt;/mrow&gt;&lt;mn&gt;1&lt;/mn&gt;&lt;/msub&gt;&lt;/mrow&gt;&lt;mrow&gt;&lt;munder&gt;&lt;mo&gt;&amp;#x2211;&lt;/mo&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/munder&gt;&lt;msub&gt;&lt;mi&gt;C&lt;/mi&gt;&lt;mi&gt;j&lt;/mi&gt;&lt;/msub&gt;&lt;/mrow&gt;&lt;/mfrac&gt;&lt;mo&gt;&amp;#x2212;&lt;/mo&gt;&lt;mi&gt;r&lt;/mi&gt;&lt;msup&gt;&lt;mo stretchy=&quot;false&quot;&gt;)&lt;/mo&gt;&lt;mn&gt;2&lt;/mn&gt;&lt;/msup&gt;&lt;/math&gt;" role="presentation" style="text-align: center; position: relative;"><nobr aria-hidden="true"><span class="math" id="MathJax-Span-10" style="width: 12.265em; display: inline-block;"><span style="display: inline-block; position: relative; width: 10.182em; height: 0px; font-size: 120%;"><span style="position: absolute; clip: rect(0.36em, 1010.18em, 3.574em, -999.997em); top: -2.199em; left: 0em;"><span class="mrow" id="MathJax-Span-11"><span class="mi" id="MathJax-Span-12" style="font-family: MathJax_Main;">Ω</span><span class="mo" id="MathJax-Span-13" style="font-family: MathJax_Main;">(</span><span class="mi" id="MathJax-Span-14" style="font-family: MathJax_Main;">Λ</span><span class="mo" id="MathJax-Span-15" style="font-family: MathJax_Main;">)</span><span class="mo" id="MathJax-Span-16" style="font-family: MathJax_Main; padding-left: 0.301em;">=</span><span class="mo" id="MathJax-Span-17" style="font-family: MathJax_Main; padding-left: 0.301em;">(</span><span class="mfrac" id="MathJax-Span-18"><span style="display: inline-block; position: relative; width: 3.396em; height: 0px; margin-right: 0.122em; margin-left: 0.122em;"><span style="position: absolute; clip: rect(3.039em, 1003.28em, 4.586em, -999.997em); top: -4.878em; left: 50%; margin-left: -1.664em;"><span class="mrow" id="MathJax-Span-19"><span class="munderover" id="MathJax-Span-20"><span style="display: inline-block; position: relative; width: 1.432em; height: 0px;"><span style="position: absolute; clip: rect(3.039em, 1001.01em, 4.408em, -999.997em); top: -3.985em; left: 0em;"><span class="mo" id="MathJax-Span-21" style="font-family: MathJax_Size1; vertical-align: 0em;">∑</span><span style="display: inline-block; width: 0px; height: 3.991em;"></span></span><span style="position: absolute; top: -3.688em; left: 1.074em;"><span class="mi" id="MathJax-Span-22" style="font-size: 70.7%; font-family: MathJax_Math-italic;">j</span><span style="display: inline-block; width: 0px; height: 3.991em;"></span></span></span></span><span class="texatom" id="MathJax-Span-23" style="padding-left: 0.182em;"><span class="mrow" id="MathJax-Span-24"><span class="mo" id="MathJax-Span-25" style="font-family: MathJax_Main;">|</span></span></span><span class="mi" id="MathJax-Span-26" style="font-family: MathJax_Main;">Λ</span><span class="msubsup" id="MathJax-Span-27"><span style="display: inline-block; position: relative; width: 0.717em; height: 0px;"><span style="position: absolute; clip: rect(3.039em, 1000.18em, 4.408em, -999.997em); top: -3.985em; left: 0em;"><span class="texatom" id="MathJax-Span-28"><span class="mrow" id="MathJax-Span-29"><span class="mo" id="MathJax-Span-30" style="font-family: MathJax_Main;">|</span></span></span><span style="display: inline-block; width: 0px; height: 3.991em;"></span></span><span style="position: absolute; top: -3.688em; left: 0.301em;"><span class="mn" id="MathJax-Span-31" style="font-size: 70.7%; font-family: MathJax_Main;">1</span><span style="display: inline-block; width: 0px; height: 3.991em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 3.991em;"></span></span><span style="position: absolute; clip: rect(3.039em, 1002.68em, 4.586em, -999.997em); top: -3.271em; left: 50%; margin-left: -1.366em;"><span class="mrow" id="MathJax-Span-32"><span class="munderover" id="MathJax-Span-33"><span style="display: inline-block; position: relative; width: 1.432em; height: 0px;"><span style="position: absolute; clip: rect(3.039em, 1001.01em, 4.408em, -999.997em); top: -3.985em; left: 0em;"><span class="mo" id="MathJax-Span-34" style="font-family: MathJax_Size1; vertical-align: 0em;">∑</span><span style="display: inline-block; width: 0px; height: 3.991em;"></span></span><span style="position: absolute; top: -3.688em; left: 1.074em;"><span class="mi" id="MathJax-Span-35" style="font-size: 70.7%; font-family: MathJax_Math-italic;">j</span><span style="display: inline-block; width: 0px; height: 3.991em;"></span></span></span></span><span class="msubsup" id="MathJax-Span-36" style="padding-left: 0.182em;"><span style="display: inline-block; position: relative; width: 1.074em; height: 0px;"><span style="position: absolute; clip: rect(3.098em, 1000.78em, 4.17em, -999.997em); top: -3.985em; left: 0em;"><span class="mi" id="MathJax-Span-37" style="font-family: MathJax_Math-italic;">C<span style="display: inline-block; overflow: hidden; height: 1px; width: 0.063em;"></span></span><span style="display: inline-block; width: 0px; height: 3.991em;"></span></span><span style="position: absolute; top: -3.807em; left: 0.717em;"><span class="mi" id="MathJax-Span-38" style="font-size: 70.7%; font-family: MathJax_Math-italic;">j</span><span style="display: inline-block; width: 0px; height: 3.991em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 3.991em;"></span></span><span style="position: absolute; clip: rect(0.836em, 1003.4em, 1.253em, -999.997em); top: -1.307em; left: 0em;"><span style="display: inline-block; overflow: hidden; vertical-align: 0em; border-top: 1.3px solid; width: 3.396em; height: 0px;"></span><span style="display: inline-block; width: 0px; height: 1.074em;"></span></span></span></span><span class="mo" id="MathJax-Span-39" style="font-family: MathJax_Main; padding-left: 0.241em;">−</span><span class="mi" id="MathJax-Span-40" style="font-family: MathJax_Math-italic; padding-left: 0.241em;">r</span><span class="msubsup" id="MathJax-Span-41"><span style="display: inline-block; position: relative; width: 0.836em; height: 0px;"><span style="position: absolute; clip: rect(3.039em, 1000.3em, 4.408em, -999.997em); top: -3.985em; left: 0em;"><span class="mo" id="MathJax-Span-42" style="font-family: MathJax_Main;">)</span><span style="display: inline-block; width: 0px; height: 3.991em;"></span></span><span style="position: absolute; top: -4.402em; left: 0.42em;"><span class="mn" id="MathJax-Span-43" style="font-size: 70.7%; font-family: MathJax_Main;">2</span><span style="display: inline-block; width: 0px; height: 3.991em;"></span></span></span></span></span><span style="display: inline-block; width: 0px; height: 2.205em;"></span></span></span><span style="display: inline-block; overflow: hidden; vertical-align: -1.496em; border-left: 0px solid; width: 0px; height: 3.575em;"></span></span></nobr><span class="MJX_Assistive_MathML MJX_Assistive_MathML_Block" role="presentation"><math xmlns="http://www.w3.org/1998/Math/MathML" display="block"><mi mathvariant="normal">Ω</mi><mo stretchy="false">(</mo><mi mathvariant="normal">Λ</mi><mo stretchy="false">)</mo><mo>=</mo><mo stretchy="false">(</mo><mfrac><mrow><munder><mo>∑</mo><mi>j</mi></munder><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">|</mo></mrow><mi mathvariant="normal">Λ</mi><msub><mrow class="MJX-TeXAtom-ORD"><mo stretchy="false">|</mo></mrow><mn>1</mn></msub></mrow><mrow><munder><mo>∑</mo><mi>j</mi></munder><msub><mi>C</mi><mi>j</mi></msub></mrow></mfrac><mo>−</mo><mi>r</mi><msup><mo stretchy="false">)</mo><mn>2</mn></msup></math></span></span></div><script type="math/tex; mode=display" id="MathJax-Element-4"> \Omega (\Lambda)=(\frac{\sum_j|\Lambda|_1}{\sum_jC_j}-r)^2 </script>
+代码如下：</li>
+</ul>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">def</span> <span class="pl-en">regularzation_update</span>(<span class="pl-s1">model</span>, <span class="pl-s1">args</span>):
+    <span class="pl-k">if</span> <span class="pl-c1">not</span> <span class="pl-s1">args</span>.<span class="pl-s1">sum_channel</span>:
+        <span class="pl-s1">args</span>.<span class="pl-s1">sum_channel</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>
+        <span class="pl-k">for</span> <span class="pl-s1">layer</span> <span class="pl-c1">in</span> <span class="pl-s1">model</span>.<span class="pl-en">modules</span>():
+            <span class="pl-k">if</span> <span class="pl-en">isinstance</span>(<span class="pl-s1">layer</span>, <span class="pl-s1">nn</span>.<span class="pl-v">BatchNorm2d</span>):
+                <span class="pl-s1">args</span>.<span class="pl-s1">sum_channel</span> <span class="pl-c1">+=</span> <span class="pl-s1">layer</span>.<span class="pl-s1">weight</span>.<span class="pl-en">size</span>()[<span class="pl-c1">0</span>]
+    <span class="pl-s1">sumc</span> <span class="pl-c1">=</span> <span class="pl-s1">args</span>.<span class="pl-s1">sum_channel</span>
+    <span class="pl-k">for</span> <span class="pl-s1">layer</span> <span class="pl-c1">in</span> <span class="pl-s1">model</span>.<span class="pl-en">modules</span>():
+        <span class="pl-k">if</span> <span class="pl-en">isinstance</span>(<span class="pl-s1">layer</span>, <span class="pl-s1">nn</span>.<span class="pl-v">BatchNorm2d</span>):
+            <span class="pl-s1">layer</span>.<span class="pl-s1">weight</span>.<span class="pl-s1">grad</span>.<span class="pl-s1">data</span>.<span class="pl-en">add</span>(<span class="pl-s1">args</span>.<span class="pl-s1">balance</span> <span class="pl-c1">*</span> <span class="pl-c1">2.0</span> <span class="pl-c1">*</span> <span class="pl-s1">torch</span>.<span class="pl-en">sign</span>(<span class="pl-s1">layer</span>.<span class="pl-s1">weight</span>.<span class="pl-s1">data</span>)<span class="pl-c1">*</span>(<span class="pl-s1">layer</span>.<span class="pl-s1">weight</span>.<span class="pl-s1">data</span><span class="pl-c1">/</span><span class="pl-s1">sumc</span><span class="pl-c1">-</span><span class="pl-s1">args</span>.<span class="pl-s1">ratio</span>))</pre></div>
+<h3>
+<a id="user-content-剪枝操作" class="anchor" href="file:///C:/Users/12942/Desktop/github/#%E5%89%AA%E6%9E%9D%E6%93%8D%E4%BD%9C" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>剪枝操作</h3>
+<ul>
+<li>剪枝所用的模型就是上述用10个epoch训练出来的模型</li>
+<li>剪枝操作去掉的只是BN层的权重，BN层每个权重对应的是一个channel，即每一个权重相当于这个channel的gates。将BN层权重去掉本质上就是把这个channel去掉。</li>
+<li>剪枝过程中是将不同层的BN层放在一起比较，所以是一个全局剪枝的过程（global pruning）
+-确定gates的代码如下</li>
+</ul>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">for</span> <span class="pl-s1">lid</span>, <span class="pl-s1">layer</span> <span class="pl-c1">in</span> <span class="pl-en">enumerate</span>(<span class="pl-s1">model</span>.<span class="pl-en">modules</span>()):
+        <span class="pl-k">if</span> <span class="pl-en">isinstance</span>(<span class="pl-s1">layer</span>, <span class="pl-s1">nn</span>.<span class="pl-v">BatchNorm2d</span>):
+            <span class="pl-s1">nchannel</span> <span class="pl-c1">=</span> <span class="pl-s1">layer</span>.<span class="pl-s1">weight</span>.<span class="pl-s1">data</span>.<span class="pl-s1">shape</span>[<span class="pl-c1">0</span>]
+            <span class="pl-s1">gates</span>[<span class="pl-s1">index</span>:<span class="pl-s1">index</span><span class="pl-c1">+</span><span class="pl-s1">nchannel</span>] <span class="pl-c1">=</span> <span class="pl-s1">layer</span>.<span class="pl-s1">weight</span>.<span class="pl-s1">data</span>.<span class="pl-en">abs</span>().<span class="pl-en">clone</span>()
+            <span class="pl-s1">index</span> <span class="pl-c1">+=</span> <span class="pl-s1">nchannel</span></pre></div>
+<ul>
+<li>然后定义一个阈值threshold ，使得小于这个阈值的gates全部为0，大于这个阈值的保留。但是这个阈值的设定不能是机械式设定。本作中应用了二分法，动态的搜寻最符合要求的阈值。代码如下：</li>
+</ul>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">def</span> <span class="pl-en">binary_search</span>(<span class="pl-s1">model</span>, <span class="pl-s1">gates</span>, <span class="pl-s1">args</span>, <span class="pl-s1">data_loader</span>):
+    <span class="pl-c"># Get single batch data to profile the flops of the model </span>
+    <span class="pl-s1">model</span> <span class="pl-c1">=</span> <span class="pl-s1">copy</span>.<span class="pl-en">deepcopy</span>(<span class="pl-s1">model</span>).<span class="pl-en">cpu</span>()
+    <span class="pl-s1">data</span>, <span class="pl-s1">target</span> <span class="pl-c1">=</span> <span class="pl-en">next</span>(<span class="pl-en">iter</span>(<span class="pl-s1">data_loader</span>))
+    <span class="pl-s1">ori_macs</span>, <span class="pl-s1">ori_params</span> <span class="pl-c1">=</span> <span class="pl-en">profile</span>(<span class="pl-s1">model</span>, <span class="pl-s1">inputs</span><span class="pl-c1">=</span>(<span class="pl-s1">data</span>,))  <span class="pl-c">#确定模型原始的的FLOPs和Params</span>
+    <span class="pl-c">#pos = min(int(len(gates) * args.ratio), len(gates)-1)</span>
+    <span class="pl-s1">sorted_gates</span>, <span class="pl-s1">_</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-en">sort</span>(<span class="pl-s1">gates</span>)       <span class="pl-c">#将所有们由大到小排列</span>
+    <span class="pl-c"># TODO: use binary search to find the threshold for the pruning</span>
+    <span class="pl-s1">lpos</span>, <span class="pl-s1">rpos</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>, <span class="pl-en">len</span>(<span class="pl-s1">sorted_gates</span>) <span class="pl-c1">-</span> <span class="pl-c1">1</span>     <span class="pl-c">#定义一个最大值和一个最小值</span>
+    <span class="pl-s1">input</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-en">randn</span>((<span class="pl-s1">args</span>.<span class="pl-s1">batchsize</span>, <span class="pl-c1">3</span>))  <span class="pl-c">#YYSY这一行真的没用</span>
+    <span class="pl-s1">eps</span> <span class="pl-c1">=</span> <span class="pl-c1">1</span>
+    <span class="pl-s1">macs</span>, <span class="pl-s1">params</span> <span class="pl-c1">=</span> <span class="pl-c1">None</span>, <span class="pl-c1">None</span>
+    <span class="pl-k">while</span> <span class="pl-s1">lpos</span> <span class="pl-c1">&lt;</span> <span class="pl-s1">rpos</span>:
+        <span class="pl-s1">midpos</span> <span class="pl-c1">=</span> <span class="pl-en">int</span>((<span class="pl-s1">lpos</span> <span class="pl-c1">+</span> <span class="pl-s1">rpos</span>) <span class="pl-c1">/</span> <span class="pl-c1">2</span>)
+        <span class="pl-s1">cur_thres</span> <span class="pl-c1">=</span> <span class="pl-s1">sorted_gates</span>[<span class="pl-s1">midpos</span>]      <span class="pl-c">#求暂时的阈值</span>
+        <span class="pl-s1">cfg</span> <span class="pl-c1">=</span> [] 
+        <span class="pl-k">for</span> <span class="pl-s1">layer</span> <span class="pl-c1">in</span> <span class="pl-s1">model</span>.<span class="pl-en">modules</span>():
+            <span class="pl-k">if</span> <span class="pl-en">isinstance</span>(<span class="pl-s1">layer</span>, <span class="pl-s1">nn</span>.<span class="pl-v">BatchNorm2d</span>):
+                <span class="pl-s1">weight_copy</span> <span class="pl-c1">=</span> <span class="pl-s1">layer</span>.<span class="pl-s1">weight</span>.<span class="pl-s1">data</span>.<span class="pl-en">abs</span>().<span class="pl-en">clone</span>()
+                <span class="pl-s1">mask</span> <span class="pl-c1">=</span> <span class="pl-s1">weight_copy</span>.<span class="pl-en">gt</span>(<span class="pl-s1">cur_thres</span>)    <span class="pl-c">#根据阈值生成mask，gt是大于   </span>
+                <span class="pl-s1">cfg</span>.<span class="pl-en">append</span>(<span class="pl-en">int</span>(<span class="pl-s1">torch</span>.<span class="pl-en">sum</span>(<span class="pl-s1">mask</span>).<span class="pl-en">item</span>()))
+            <span class="pl-k">elif</span> <span class="pl-en">isinstance</span>(<span class="pl-s1">layer</span>, <span class="pl-s1">nn</span>.<span class="pl-v">MaxPool2d</span>):
+                <span class="pl-s1">cfg</span>.<span class="pl-en">append</span>(<span class="pl-s">'M'</span>)
+        <span class="pl-s1">pruned_model</span> <span class="pl-c1">=</span> <span class="pl-s1">models</span>.<span class="pl-s1">__dict__</span>[<span class="pl-s1">args</span>.<span class="pl-s1">model</span>](<span class="pl-s1">args</span>.<span class="pl-s1">num_class</span>, <span class="pl-s1">cfg</span><span class="pl-c1">=</span><span class="pl-s1">cfg</span>) <span class="pl-c">#根据阈值生成的暂时的模型，目的是为了计算FLOPs和Params</span>
+        <span class="pl-en">pruned_model</span>(<span class="pl-s1">data</span>)
+        <span class="pl-s1">macs</span>, <span class="pl-s1">params</span> <span class="pl-c1">=</span> <span class="pl-en">profile</span>(<span class="pl-s1">pruned_model</span>, <span class="pl-s1">inputs</span><span class="pl-c1">=</span>(<span class="pl-s1">data</span>,)) <span class="pl-c">#得到两个新参数</span>
+        <span class="pl-k">if</span> <span class="pl-en">abs</span>(<span class="pl-s1">macs</span> <span class="pl-c1">-</span> <span class="pl-s1">ori_macs</span> <span class="pl-c1">*</span> <span class="pl-s1">args</span>.<span class="pl-s1">ratio</span>) <span class="pl-c1">&lt;</span> <span class="pl-s1">eps</span>:
+            <span class="pl-s1">lpos</span> <span class="pl-c1">=</span> <span class="pl-s1">midpos</span>
+            <span class="pl-k">break</span>
+        <span class="pl-k">elif</span> <span class="pl-s1">macs</span> <span class="pl-c1">&gt;</span> <span class="pl-s1">ori_macs</span> <span class="pl-c1">*</span> <span class="pl-s1">args</span>.<span class="pl-s1">ratio</span>:
+            <span class="pl-s1">lpos</span> <span class="pl-c1">=</span> <span class="pl-s1">midpos</span> <span class="pl-c1">+</span> <span class="pl-c1">1</span>
+        <span class="pl-k">else</span>: 
+            <span class="pl-c">#macs &lt; ori_macs * args.ratio:</span>
+            <span class="pl-s1">rpos</span> <span class="pl-c1">=</span> <span class="pl-s1">midpos</span> <span class="pl-c1">-</span> <span class="pl-c1">1</span>
+    <span class="pl-en">print</span>(<span class="pl-s">'==&gt;Original Model:'</span>)
+    <span class="pl-en">print</span>(<span class="pl-s">'  Flops: {}G  Parameters: {}M'</span>.<span class="pl-en">format</span>(<span class="pl-s1">ori_macs</span><span class="pl-c1">/</span>(<span class="pl-c1">10</span><span class="pl-c1">**</span><span class="pl-c1">9</span>), <span class="pl-s1">ori_params</span><span class="pl-c1">/</span>(<span class="pl-c1">10</span><span class="pl-c1">**</span><span class="pl-c1">6</span>)))
+    <span class="pl-en">print</span>(<span class="pl-s">'==&gt;Pruned Model:'</span>)
+    <span class="pl-en">print</span>(<span class="pl-s">'  Flops: {}G  Parameters: {}M'</span>.<span class="pl-en">format</span>(<span class="pl-s1">macs</span><span class="pl-c1">/</span>(<span class="pl-c1">10</span><span class="pl-c1">**</span><span class="pl-c1">9</span>), <span class="pl-s1">params</span><span class="pl-c1">/</span>(<span class="pl-c1">10</span><span class="pl-c1">**</span><span class="pl-c1">6</span>)))
+    <span class="pl-k">return</span> <span class="pl-s1">sorted_gates</span>[<span class="pl-s1">lpos</span>]</pre></div>
+<p>-根据阈值生成mask，把mask与BN层权重相乘即可得到结果，代码如下：</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">for</span> <span class="pl-s1">lid</span>, <span class="pl-s1">layer</span> <span class="pl-c1">in</span> <span class="pl-en">enumerate</span>(<span class="pl-s1">model</span>.<span class="pl-en">modules</span>()):
+        <span class="pl-k">if</span> <span class="pl-en">isinstance</span>(<span class="pl-s1">layer</span>, <span class="pl-s1">nn</span>.<span class="pl-v">BatchNorm2d</span>):
+            <span class="pl-s1">weight_copy</span> <span class="pl-c1">=</span> <span class="pl-s1">layer</span>.<span class="pl-s1">weight</span>.<span class="pl-s1">data</span>.<span class="pl-en">abs</span>().<span class="pl-en">clone</span>()
+            <span class="pl-s1">threshold</span><span class="pl-c1">=</span><span class="pl-s1">threshold</span>.<span class="pl-en">cuda</span>()
+            <span class="pl-s1">mask</span> <span class="pl-c1">=</span> <span class="pl-s1">weight_copy</span>.<span class="pl-en">gt</span>(<span class="pl-s1">threshold</span>)
+            <span class="pl-s1">mask</span> <span class="pl-c1">=</span> <span class="pl-s1">mask</span>.<span class="pl-en">float</span>().<span class="pl-en">cuda</span>()
+            <span class="pl-s1">layer</span>.<span class="pl-s1">weight</span>.<span class="pl-s1">data</span>.<span class="pl-en">mul_</span>(<span class="pl-s1">mask</span>)
+            <span class="pl-s1">layer</span>.<span class="pl-s1">bias</span>.<span class="pl-s1">data</span>.<span class="pl-en">mul_</span>(<span class="pl-s1">mask</span>)
+            <span class="pl-s1">pruned</span> <span class="pl-c1">+=</span> <span class="pl-s1">mask</span>.<span class="pl-s1">shape</span>[<span class="pl-c1">0</span>] <span class="pl-c1">-</span> <span class="pl-en">sum</span>(<span class="pl-s1">mask</span>)
+            <span class="pl-s1">cfg</span>.<span class="pl-en">append</span>(<span class="pl-en">int</span>(<span class="pl-s1">torch</span>.<span class="pl-en">sum</span>(<span class="pl-s1">mask</span>).<span class="pl-en">item</span>()))
+            <span class="pl-s1">cfg_mask</span>.<span class="pl-en">append</span>(<span class="pl-s1">mask</span>)
+        <span class="pl-k">elif</span> <span class="pl-en">isinstance</span>(<span class="pl-s1">layer</span>, <span class="pl-s1">nn</span>.<span class="pl-v">MaxPool2d</span>):
+            <span class="pl-s1">cfg</span>.<span class="pl-en">append</span>(<span class="pl-s">'M'</span>)</pre></div>
+<h3>
+<a id="user-content-新模型的权重训练" class="anchor" href="file:///C:/Users/12942/Desktop/github/#%E6%96%B0%E6%A8%A1%E5%9E%8B%E7%9A%84%E6%9D%83%E9%87%8D%E8%AE%AD%E7%BB%83" aria-hidden="true"><span aria-hidden="true" class="octicon octicon-link"></span></a>新模型的权重训练</h3>
+<p>-再把train_loader，val_loader放进去训练模型。训练步骤为在每一个epoch里面model.train()一次，得到loss并loss.backward(),再用验证集去model.eval()。注意model.train()和model.eval()的区别。model.train()启用 BatchNormalization 和 Dropout，model.eval()不启用。代码如下:</p>
+<div class="highlight highlight-source-python"><pre><span class="pl-k">def</span> <span class="pl-en">weight_train</span>(<span class="pl-s1">model</span>, <span class="pl-s1">train_loader</span>, <span class="pl-s1">val_loader</span>, <span class="pl-s1">args</span>):
+    <span class="pl-s1">best_acc</span> <span class="pl-c1">=</span> <span class="pl-c1">0.0</span>
+    <span class="pl-s1">criterion</span> <span class="pl-c1">=</span> <span class="pl-s1">nn</span>.<span class="pl-v">CrossEntropyLoss</span>()
+    <span class="pl-s1">optimizer</span> <span class="pl-c1">=</span> <span class="pl-s1">optim</span>.<span class="pl-v">SGD</span>(<span class="pl-s1">model</span>.<span class="pl-en">parameters</span>(), <span class="pl-s1">lr</span><span class="pl-c1">=</span><span class="pl-s1">args</span>.<span class="pl-s1">lr</span>, <span class="pl-s1">momentum</span><span class="pl-c1">=</span><span class="pl-c1">0.9</span>, <span class="pl-s1">weight_decay</span><span class="pl-c1">=</span><span class="pl-s1">args</span>.<span class="pl-s1">weight_decay</span>)
+    <span class="pl-c">#lr_scheduler = optim.lr_scheduler.StepLR(optimizer, step_size=100, gamma=0.1)</span>
+    <span class="pl-s1">lr_scheduler</span> <span class="pl-c1">=</span> <span class="pl-s1">torch</span>.<span class="pl-s1">optim</span>.<span class="pl-s1">lr_scheduler</span>.<span class="pl-v">MultiStepLR</span>(<span class="pl-s1">optimizer</span>, [<span class="pl-en">int</span>(<span class="pl-s1">args</span>.<span class="pl-s1">wepoch</span><span class="pl-c1">*</span><span class="pl-c1">0.5</span>), <span class="pl-en">int</span>(<span class="pl-s1">args</span>.<span class="pl-s1">wepoch</span><span class="pl-c1">*</span><span class="pl-c1">0.75</span>)], <span class="pl-s1">gamma</span><span class="pl-c1">=</span><span class="pl-c1">0.1</span>)  <span class="pl-c">#MultiStepLR:调整学习率</span>
+    <span class="pl-k">for</span> <span class="pl-s1">i</span> <span class="pl-c1">in</span> <span class="pl-en">range</span>(<span class="pl-s1">args</span>.<span class="pl-s1">wepoch</span>):
+        <span class="pl-en">print</span>(<span class="pl-s">'==&gt;Epoch %d'</span> <span class="pl-c1">%</span> (<span class="pl-s1">i</span><span class="pl-c1">+</span><span class="pl-c1">1</span>))
+        <span class="pl-en">print</span>(<span class="pl-s">'==&gt;Training'</span>)
+        <span class="pl-s1">model</span>.<span class="pl-en">train</span>()
+        <span class="pl-s1">train_loss</span> <span class="pl-c1">=</span> <span class="pl-c1">0.0</span>
+        <span class="pl-s1">correct</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>
+        <span class="pl-s1">total</span> <span class="pl-c1">=</span> <span class="pl-c1">0</span>
+        <span class="pl-k">for</span> <span class="pl-s1">batchid</span>, (<span class="pl-s1">data</span>, <span class="pl-s1">target</span>) <span class="pl-c1">in</span> <span class="pl-en">enumerate</span>(<span class="pl-s1">train_loader</span>):
+            <span class="pl-k">if</span> <span class="pl-s1">args</span>.<span class="pl-v">Use_Cuda</span>:
+                <span class="pl-s1">data</span>, <span class="pl-s1">target</span> <span class="pl-c1">=</span> <span class="pl-s1">data</span>.<span class="pl-en">cuda</span>(), <span class="pl-s1">target</span>.<span class="pl-en">cuda</span>()
+            <span class="pl-s1">optimizer</span>.<span class="pl-en">zero_grad</span>()
+            <span class="pl-s1">output</span> <span class="pl-c1">=</span> <span class="pl-en">model</span>(<span class="pl-s1">data</span>)
+            <span class="pl-s1">loss</span> <span class="pl-c1">=</span> <span class="pl-en">criterion</span>(<span class="pl-s1">output</span>, <span class="pl-s1">target</span>)
+            <span class="pl-s1">loss</span>.<span class="pl-en">backward</span>()
+            <span class="pl-s1">optimizer</span>.<span class="pl-en">step</span>()
+            
+            <span class="pl-s1">train_loss</span> <span class="pl-c1">+=</span> <span class="pl-s1">loss</span>.<span class="pl-en">item</span>()
+            <span class="pl-s1">_</span>, <span class="pl-s1">predicted</span> <span class="pl-c1">=</span> <span class="pl-s1">output</span>.<span class="pl-en">max</span>(<span class="pl-c1">1</span>)
+            <span class="pl-s1">total</span> <span class="pl-c1">+=</span> <span class="pl-s1">output</span>.<span class="pl-en">size</span>(<span class="pl-c1">0</span>)
+            <span class="pl-s1">correct</span> <span class="pl-c1">+=</span> <span class="pl-s1">predicted</span>.<span class="pl-en">eq</span>(<span class="pl-s1">target</span>).<span class="pl-en">sum</span>().<span class="pl-en">item</span>()
+            <span class="pl-s1">avg_loss</span> <span class="pl-c1">=</span> <span class="pl-s1">train_loss</span> <span class="pl-c1">/</span> (<span class="pl-s1">batchid</span> <span class="pl-c1">+</span> <span class="pl-c1">1</span>)
+            <span class="pl-s1">avg_acc</span> <span class="pl-c1">=</span> <span class="pl-s1">correct</span> <span class="pl-c1">/</span> <span class="pl-s1">total</span>
+            <span class="pl-en">progress_bar</span>(<span class="pl-s1">batchid</span>, <span class="pl-en">len</span>(<span class="pl-s1">train_loader</span>), <span class="pl-s">'Loss: %.3f | Acc: %.3f'</span> <span class="pl-c1">%</span> (<span class="pl-s1">avg_loss</span>, <span class="pl-s1">avg_acc</span>))
+        <span class="pl-c"># Validation</span>
+        <span class="pl-en">print</span>(<span class="pl-s">'==&gt;Validating'</span>)
+        <span class="pl-s1">val_acc</span> <span class="pl-c1">=</span> <span class="pl-en">validation</span>(<span class="pl-s1">model</span>, <span class="pl-s1">val_loader</span>, <span class="pl-s1">criterion</span>, <span class="pl-s1">args</span>.<span class="pl-v">Use_Cuda</span>)    
+        <span class="pl-k">if</span> <span class="pl-s1">val_acc</span> <span class="pl-c1">&gt;</span> <span class="pl-s1">best_acc</span>:
+            <span class="pl-s1">best_acc</span> <span class="pl-c1">=</span> <span class="pl-s1">val_acc</span>
+            <span class="pl-s1">best_checkpoint</span> <span class="pl-c1">=</span> {<span class="pl-s">'state_dict'</span>:<span class="pl-s1">model</span>.<span class="pl-en">state_dict</span>(), <span class="pl-s">'Acc'</span>:<span class="pl-s1">best_acc</span>}
+            <span class="pl-s1">fname</span> <span class="pl-c1">=</span> <span class="pl-s1">os</span>.<span class="pl-s1">path</span>.<span class="pl-en">join</span>(<span class="pl-s1">args</span>.<span class="pl-s1">outdir</span>, <span class="pl-s">'best.pth.tar'</span>)
+            <span class="pl-s1">torch</span>.<span class="pl-en">save</span>(<span class="pl-s1">best_checkpoint</span>, <span class="pl-s1">fname</span>)
+        <span class="pl-en">print</span>(<span class="pl-s">'==&gt;Best validation accuracy'</span>, <span class="pl-s1">best_acc</span>)
+        <span class="pl-c"># Save checkpoint</span>
+        <span class="pl-k">if</span> (<span class="pl-s1">i</span> <span class="pl-c1">+</span> <span class="pl-c1">1</span>) <span class="pl-c1">%</span> <span class="pl-c1">10</span> <span class="pl-c1">==</span> <span class="pl-c1">0</span>:
+            <span class="pl-s1">torch</span>.<span class="pl-en">save</span>(<span class="pl-s1">model</span>.<span class="pl-en">state_dict</span>(), <span class="pl-s1">os</span>.<span class="pl-s1">path</span>.<span class="pl-en">join</span>(<span class="pl-s1">args</span>.<span class="pl-s1">outdir</span>, <span class="pl-s">'checkpoint.pth.tar'</span>)) 
+        <span class="pl-c"># Lr_scheduler</span>
+        <span class="pl-k">if</span> <span class="pl-s1">args</span>.<span class="pl-s1">lr_decay</span>:
+            <span class="pl-s1">lr_scheduler</span>.<span class="pl-en">step</span>()</pre></div>
+
+
+
+<!-- This document was created with MarkdownPad, the Markdown editor for Windows (http://markdownpad.com) -->
+<div style="position: absolute; width: 0px; height: 0px; overflow: hidden; padding: 0px; border: 0px; margin: 0px;"><div id="MathJax_Font_Test" style="position: absolute; visibility: hidden; top: 0px; left: 0px; width: auto; padding: 0px; border: 0px; margin: 0px; white-space: nowrap; text-align: left; text-indent: 0px; text-transform: none; line-height: normal; letter-spacing: normal; word-spacing: normal; font-size: 40px; font-weight: normal; font-style: normal; font-family: MathJax_Size1, sans-serif;"></div></div></body></html>
