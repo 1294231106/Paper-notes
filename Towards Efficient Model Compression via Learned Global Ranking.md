@@ -57,8 +57,8 @@
 <br    />
 
 ### 二：我们的方法 （剪枝策略） ###
-![](8.png)
-![](9.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/8.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/9.png)
 - 之前的工作反复试验的方式确定模型复杂性和准确性的最佳点，对部署的速度会有一定的影响
 - <font color=#C71585>我们建议改变剪枝的目标，从输出一个具有预定义模型复杂性的单一卷积网络，到产生一组具有不同精度/速度权衡的卷积网络</font>
 - 过这种方式，可以大大降低模型压缩开销，从而使滤波器剪枝更加实用
@@ -68,11 +68,11 @@
 <br    />
 
 ###   三：剪枝方法（全局剪枝） ###
-![](10.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/10.png)
 - 为此，我们建议学习全局排序(或LeGR)，这是一种学习跨层排序卷积滤波器的算法，这样，通过去掉底层滤波器，就可以很容易地获得不同速度/精度权衡的卷积网络架构。得到的架构然后被微调以产生最终的模型。在这样的条件下，我们可以通过一次学习等级来获得一组架构。
 - 在不同数据集和架构上验证有效性
 ### 四：小结 ###
-![](11.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/11.png)
 - 我们提出了学习全局排列(LeGR)，它产生一组具有不同精度/速度权衡的剪枝ConvNets。
 - 我们的方法是第一个考虑去学习全局不同层的滤波器进行排序剪枝，解决了之前它解决了现有技术在基于量的滤波器修剪中的局限性。
 
@@ -80,19 +80,19 @@
 
 ##  LGR（学习全局排序） ##
 
-![](12.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/12.png)
 - 核心思想：学习不同层之间的排序，通过剪枝底层滤波器，能得到卷积层的复杂度
 - 方法的目标是取探索精度与速度的平衡。此次实验中使用FLOP计算模型的复杂度。我们发现FLOP可以预测延时
 
 
 ###  全局排序  ###
-![](13.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/13.png)
 - 为了获得不同FLOPS，已被剪枝过的卷积网络，我们建议学习滤波器在各层之间的全局排名。
  
 <br    />
 
-![](14.png)
-![](15.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/14.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/15.png)
 
 这样做会有个假设
 - 首先，全球排名公式加强了一个假设，即性能最好的较小的ConvNets是性能最好的较大的ConvNets的适当子集。这个假设可可能性很高，因为有很多方法可以在不同的层间设置滤波器个数，以达到给定的触发器计数。这就意味着，性能最好的小网络在某些层中有更多的过滤个数，而在其他层中有更少的过滤计数（与性能最好的更大ConvNets相比）
@@ -104,7 +104,7 @@
 （有关子集的设定）
 <br    />
 
-![](16.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/16.png)
 - （子集假设）公式意思为假设一个剪枝后的ConvNet，假如他某一层的滤波器个数学校与另一个ConvNet,则它的全局FLOP也是小的。由于学习全局排序是一个工作量较大的过程，我们假设过滤器范数能够在局部(按层内)而不是全局(按层间)对过滤器进行排序。
 - （范数假设）l2规范可以用来比较每一层内部的过滤器的重要性，但不能用于跨层的过滤器。
 
@@ -113,7 +113,7 @@
 
 
 ###  LEGR（学习全局剪枝的过程）  ###
-![](17.png)
-![](18.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/17.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/18.png)
 
 - 可以考虑构建一个基于不同 a,k 产生的具有不同FLOP的卷积层来进行评估。但由于不同FLOP的ConvNets精度不同。因此，更新验证集的时候，我们使用具有最低FLOP的ConvNet。优化问题就变成（2）（3）（公式2表明的市优化问题，约束条件为在最小的FLOP的情况下）
