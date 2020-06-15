@@ -9,7 +9,7 @@
 - 剪枝要求：为用户指定模型复杂度（如FLOPS）
 
 ### 第二部分 ###
-![](2.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/2.png)
 - 确定一个复杂模型的优化方案是非常耗时的
 - 1.ConvNets的精度和速度直接影响到应用的性能 
   <br />2.其次，如果在推理过程中不评估ConvNets，就很难评估程序的性能
