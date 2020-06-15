@@ -17,18 +17,18 @@
 <br    />
 
 
-![](3.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/3.png)
 - 因此，通过滤波器剪枝，找到一个精度和速度之间的平衡点会非常的耗时
 
 <br    />
 
-![](4.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/4.png)
 - 将这项工作（filter pruning）变得更有效的第一步，就是将模型压缩变为产生一些列的卷积层，这些卷积层权衡着各种范围的精度和延迟，而不是产生一个针对一些预定义的延迟约束的卷积网络。
 
 ### 第三部分 ###
 <br    />
 
-![](5.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/5.png)
 
 - 我们的方法：建议学习一个不同卷积层的全局排列（global ranking），并通过剪枝底部的滤波器，来获得一系列可以达到精度/延时都平衡的卷积层。
 - 命名我们的方法“LeGR”
@@ -40,14 +40,14 @@
 
 ##  引言 ##
 ### 一：之前的工作 ###
-![](6.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/6.png)
 
 - 要把程序放在储存空间有限的移动设备上
 - 我们设想，下一代具身人工智能系统将运行在自主机器人和无人机等移动设备上，这些设备的计算资源有限，因此将需要模型压缩技术来将此类智能代理引入我们的生活
 
 <br    />
 
-![](7.png)
+![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/7.png)
 - 简单介绍了一下之前的filter pruning的工作
 - 滤波器剪枝的核心是将最没用的滤波器减去，达到精度损失最小且实现最大的加速
 -  现有的滤波器剪枝一整个复杂模型。然而决定一个复杂模型对于嵌入式AI设备是困难的
