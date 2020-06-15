@@ -3,7 +3,7 @@
 ##  摘要 ##
 ### 第一部分 ###
 
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/1.png)
+[](https://github.com/1294231106/Paper-notes/blob/master/pictures/1.png)
 
 - 剪枝“卷积层”的滤波器
 - 剪枝要求：为用户指定模型复杂度（如FLOPS）
