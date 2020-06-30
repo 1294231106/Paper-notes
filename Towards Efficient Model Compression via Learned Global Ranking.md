@@ -1,119 +1,27 @@
 #  Towards Efficient Model Compression via Learned Global Ranking  #
 ———————————————————————————————
 ##  摘要 ##
-### 第一部分 ###
+- 神经网络剪枝为深度神经网络在资源受限设备上的应用提供了广阔的前景。然而，现有的剪枝方法由于缺乏对非显著网络成分的理论指导，在剪枝设计中存在训练效率低、人工成本高的问题。
+- 本文通过对高秩特征图的研究，提出了一种新的滤波剪枝方法。我们的HRank的灵感来自于这样一个发现，即由单个过滤器生成的多个特征图的平均秩总是相同的，而不考虑接收到的CNNs图像batch的数量。在此基础上，本文提出了一种用数学方法对低秩特征图进行滤波的方法。我们的剪枝背后的原则是，低秩特征图包含的信息较少，因此剪枝的结果可以很容易地复制。
+- 此外，我们还通过实验证明了高秩特征图的权值包含了更多的重要信息，即使不更新一部分，对模型性能的影响也很小。在不引入任何额外约束的情况下，HRank在计算和参数减少方面比现有技术有了显著的改进，并且具有相似的准确性。
+##  Introduction ##
+### 先前的方法 ###
+- 1.卷积核压缩
+- 2.参数量化
+- 3.网络剪枝，包含权值剪枝和滤波器剪枝
 
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/1.png)
+我们的方法主要是滤波器剪枝
 
-- 剪枝“卷积层”的滤波器
-- 剪枝要求：为用户指定模型复杂度（如FLOPS）
-
-### 第二部分 ###
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/2.png)
-- 确定一个复杂模型的优化方案是非常耗时的
-- 1.ConvNets的精度和速度直接影响到应用的性能 
-  <br />2.其次，如果在推理过程中不评估ConvNets，就很难评估程序的性能
-
-<br    />
-
-
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/3.png)
-- 因此，通过滤波器剪枝，找到一个精度和速度之间的平衡点会非常的耗时
-
-<br    />
-
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/4.png)
-- 将这项工作（filter pruning）变得更有效的第一步，就是将模型压缩变为产生一些列的卷积层，这些卷积层权衡着各种范围的精度和延迟，而不是产生一个针对一些预定义的延迟约束的卷积网络。
-
-### 第三部分 ###
-<br    />
-
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/5.png)
-
-- 我们的方法：建议学习一个不同卷积层的全局排列（global ranking），并通过剪枝底部的滤波器，来获得一系列可以达到精度/延时都平衡的卷积层。
-- 命名我们的方法“LeGR”
-- 优点
-（1）比之前方法快2-3倍
-（2）在resnet-56，cifar100上的性能较好
-（3）LEGR在ImageNet,MobileNet上的性能也比较好
+### 滤波器剪枝的分类 ###
+- 属性重要性:根据CNNs的固有属性对过滤器进行修剪。这些修剪方法并不能弥补网络训练的损失。在修剪之后，通过微调来增强模型性能。主要有：利用大网络中输出的稀疏性来去除零激活率高的滤波器。基于l1-norm的剪枝假设带有小规范的参数或特征信息较少并删除了最不重要的滤波器。He等人计算了层的几何中位数，并修剪了最接近的过滤器
+- 适应重要性:与基于属性重要性的方法不同，另一个方向将剪枝需求嵌入到网络训练损失中，并采用联合再训练优化来生成自适应剪枝决策。Liu等人和Zhao等人对BN层的尺度因子施加了稀疏约束，使得具有较低尺度因子的通道被认为是不重要的。Huang等人和Lin等人引入了一个新的比例因子参数(也称为掩码)来学习稀疏结构剪枝，其中移除对应于比例因子0的滤波器。
 
 
-##  引言 ##
-### 一：之前的工作 ###
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/6.png)
+### 我们的方法 ###
+- 如图2所示，我们发现，无论CNN看到多少数据，单个过滤器生成的feature map的平均秩总是相同的。这表明，只使用输入图像的一小部分就可以准确地估计深度cnn中特征图的秩，从而达到高效的目的。基于这一思想，我们用数学方法证明了秩越低的特征映射对精度的贡献越小。因此，可以首先删除生成这些特征映射的过滤器。
 
-- 要把程序放在储存空间有限的移动设备上
-- 我们设想，下一代具身人工智能系统将运行在自主机器人和无人机等移动设备上，这些设备的计算资源有限，因此将需要模型压缩技术来将此类智能代理引入我们的生活
-
-<br    />
-
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/7.png)
-- 简单介绍了一下之前的filter pruning的工作
-- 滤波器剪枝的核心是将最没用的滤波器减去，达到精度损失最小且实现最大的加速
--  现有的滤波器剪枝一整个复杂模型。然而决定一个复杂模型对于嵌入式AI设备是困难的
--  以无人机和面向用户的机器人为例（MovieQA , VQA），他们需要大型的模型和很好的精度，否则将影响用户体验。
--  核心：上述应用需要多次迭代试验以找到ConvNets的速度和精度之间的最佳平衡点。
-
-<br    />
-
-### 二：我们的方法 （剪枝策略） ###
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/8.png)
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/9.png)
-- 之前的工作反复试验的方式确定模型复杂性和准确性的最佳点，对部署的速度会有一定的影响
-- <font color=#C71585>我们建议改变剪枝的目标，从输出一个具有预定义模型复杂性的单一卷积网络，到产生一组具有不同精度/速度权衡的卷积网络</font>
-- 过这种方式，可以大大降低模型压缩开销，从而使滤波器剪枝更加实用
-- 图一：与先前技术中为每个修剪过程生成一个卷积不同，我们提出的方法生成一组卷积，以可以有效地探索权衡
-
-
-<br    />
-
-###   三：剪枝方法（全局剪枝） ###
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/10.png)
-- 为此，我们建议学习全局排序(或LeGR)，这是一种学习跨层排序卷积滤波器的算法，这样，通过去掉底层滤波器，就可以很容易地获得不同速度/精度权衡的卷积网络架构。得到的架构然后被微调以产生最终的模型。在这样的条件下，我们可以通过一次学习等级来获得一组架构。
-- 在不同数据集和架构上验证有效性
-### 四：小结 ###
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/11.png)
-- 我们提出了学习全局排列(LeGR)，它产生一组具有不同精度/速度权衡的剪枝ConvNets。
-- 我们的方法是第一个考虑去学习全局不同层的滤波器进行排序剪枝，解决了之前它解决了现有技术在基于量的滤波器修剪中的局限性。
-
-<br    />
-
-##  LGR（学习全局排序） ##
-
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/12.png)
-- 核心思想：学习不同层之间的排序，通过剪枝底层滤波器，能得到卷积层的复杂度
-- 方法的目标是取探索精度与速度的平衡。此次实验中使用FLOP计算模型的复杂度。我们发现FLOP可以预测延时
-
-
-###  全局排序  ###
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/13.png)
-- 为了获得不同FLOPS，已被剪枝过的卷积网络，我们建议学习滤波器在各层之间的全局排名。
- 
-<br    />
-
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/14.png)
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/15.png)
-
-这样做会有个假设
-- 首先，全球排名公式加强了一个假设，即性能最好的较小的ConvNets是性能最好的较大的ConvNets的适当子集。这个假设可可能性很高，因为有很多方法可以在不同的层间设置滤波器个数，以达到给定的触发器计数。这就意味着，性能最好的小网络在某些层中有更多的过滤个数，而在其他层中有更少的过滤计数（与性能最好的更大ConvNets相比）
-
-- 这个设定使得全局滤波器剪枝的思想成立，可以更有效的产生不同的具有FLOP的ConvNets
-- 此外，第5.1节的实验结果表明，在此假设下得到的剪枝卷积神经网络与没有此假设下得到的剪枝卷积神经网络在性能上具有竞争力。下面我们更正式地陈述子集假设。
-
-<br    />
-（有关子集的设定）
-<br    />
-
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/16.png)
-- （子集假设）公式意思为假设一个剪枝后的ConvNet，假如他某一层的滤波器个数学校与另一个ConvNet,则它的全局FLOP也是小的。由于学习全局排序是一个工作量较大的过程，我们假设过滤器范数能够在局部(按层内)而不是全局(按层间)对过滤器进行排序。
-- （范数假设）l2规范可以用来比较每一层内部的过滤器的重要性，但不能用于跨层的过滤器。
-
-- （重新定义重要性的公式）为了跨层比较滤波器犯书，我们建议学习基于滤波器范数的分层仿射变换。具体来说，滤波器i的重要性定义为公式（1）。即一个仿射变换函数。
-- 根据重新定义的I，我们可以剪枝小于I的滤波器。（这个过程可以有效地完成不需要训练数据(因为剪枝变成α-κ的编码）
-
-
-###  LEGR（学习全局剪枝的过程）  ###
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/17.png)
-![](https://github.com/1294231106/Paper-notes/blob/master/pictures/Towards%20Efficient%20Model%20Compression%20via%20Learned%20Global%20Ranking/18.png)
-
-- 可以考虑构建一个基于不同 a,k 产生的具有不同FLOP的卷积层来进行评估。但由于不同FLOP的ConvNets精度不同。因此，更新验证集的时候，我们使用具有最低FLOP的ConvNet。优化问题就变成（2）（3）（公式2表明的市优化问题，约束条件为在最小的FLOP的情况下）
+summarize
+- 我们的经验证明，单个过滤器生成的特征图的平均秩几乎是不变的。
+据我们所知，这是第一次有这样的结论
+- 我们从数学上证明了具有较低等级特征图的过滤器信息较少,因此可以将其删除掉
+- 实验的结果非常好
